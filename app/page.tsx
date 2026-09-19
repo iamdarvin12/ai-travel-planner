@@ -46,7 +46,6 @@ export default function Home() {
   const [days, setDays] = useState("");
   const [travelers, setTravelers] = useState("1");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -107,12 +106,12 @@ export default function Home() {
         document
           .getElementById("generated-trip")
           ?.scrollIntoView({ behavior: "smooth" });
-      }, 150);
+      }, 100);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Something went wrong while generating your trip."
+          : "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -123,23 +122,23 @@ export default function Home() {
     if (!trip) return;
 
     try {
-      const existing = JSON.parse(
+      const savedTrips = JSON.parse(
         localStorage.getItem("savedTrips") || "[]"
       );
 
-      const tripToSave = {
+      const newTrip = {
         ...trip,
         id: Date.now().toString(),
       };
 
       localStorage.setItem(
         "savedTrips",
-        JSON.stringify([tripToSave, ...existing])
+        JSON.stringify([newTrip, ...savedTrips])
       );
 
       setSaved(true);
     } catch (error) {
-      console.error("Unable to save trip:", error);
+      console.error("Could not save trip:", error);
     }
   }
 
@@ -160,90 +159,95 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+    <main className="min-h-screen bg-white text-slate-900">
+
+      {/* NAVIGATION */}
+      <nav className="border-b border-slate-100 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 text-xl text-white shadow-lg shadow-blue-200">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-xl text-white">
               ✈
             </div>
 
             <div>
-              <div className="text-xl font-bold tracking-tight text-slate-900">
+              <div className="text-xl font-bold tracking-tight">
                 Velora <span className="text-blue-600">Trip</span>
               </div>
 
-              <div className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Plan Smarter. Travel Further.
-              </div>
+              </p>
             </div>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            <a
-              href="#planner"
-              className="hidden rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-blue-600 sm:block"
+          <div className="flex items-center gap-6">
+            <Link
+              href="/"
+              className="hidden text-sm font-medium text-blue-600 sm:block"
             >
-              Plan a Trip
-            </a>
+              Home
+            </Link>
 
             <Link
               href="/my-trips"
-              className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:border-blue-200 hover:text-blue-600"
+              className="text-sm font-medium text-slate-600 hover:text-blue-600"
             >
               My Trips
             </Link>
+
+            <a
+              href="#planner"
+              className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Plan a Trip
+            </a>
           </div>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero-travel.jpg"
-            alt="Beautiful travel destination"
-            fill
-            priority
-            className="object-cover"
-          />
+      <section className="relative min-h-[580px] overflow-hidden">
+        <Image
+          src="/images/hero-travel.jpg"
+          alt="Travel destination"
+          fill
+          priority
+          className="object-cover"
+        />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/65 to-slate-900/20" />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
 
-        <div className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
-          <div className="max-w-3xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
-              <span>✦</span>
-              AI-powered travel planning
+        <div className="relative mx-auto flex min-h-[580px] max-w-7xl items-center px-6 py-20">
+          <div className="max-w-3xl text-white">
+
+            <div className="mb-5 inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm backdrop-blur">
+              ✦ Powered by Google Gemini AI
             </div>
 
-            <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-6xl lg:text-7xl">
-              Turn ideas into
+            <h1 className="text-5xl font-bold leading-tight md:text-6xl">
+              Your journey,
               <span className="block text-sky-300">
-                extraordinary trips.
+                intelligently planned.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200 md:text-xl">
-              Velora Trip creates personalized itineraries around your
-              destination, budget and interests — so you can spend less time
-              planning and more time exploring.
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
+              Velora Trip transforms your destination, budget and interests
+              into a personalized day-by-day itinerary designed around the
+              way you want to travel.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3 text-sm text-white">
-              <HeroBadge text="Personalized itineraries" />
-              <HeroBadge text="Budget-aware planning" />
-              <HeroBadge text="Smart daily schedules" />
+            <div className="mt-8 flex flex-wrap gap-3">
+              <HeroPill text="Personalized itineraries" />
+              <HeroPill text="Budget planning" />
+              <HeroPill text="Google Maps integration" />
             </div>
 
             <a
               href="#planner"
-              className="mt-9 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 font-semibold text-slate-900 shadow-xl hover:-translate-y-0.5 hover:bg-blue-50"
+              className="mt-9 inline-block rounded-xl bg-blue-600 px-7 py-3.5 font-semibold text-white shadow-lg hover:bg-blue-700"
             >
-              Start Planning
-              <span>→</span>
+              Start Planning →
             </a>
           </div>
         </div>
@@ -252,106 +256,122 @@ export default function Home() {
       {/* PLANNER */}
       <section
         id="planner"
-        className="relative z-10 mx-auto -mt-8 max-w-7xl px-6 lg:px-8"
+        className="mx-auto max-w-7xl px-6 py-20"
       >
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-200/70 md:p-9">
-          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div className="mb-10 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+            AI Travel Planner
+          </p>
+
+          <h2 className="mt-3 text-4xl font-bold tracking-tight">
+            Plan your next adventure
+          </h2>
+
+          <p className="mx-auto mt-3 max-w-2xl text-slate-500">
+            Tell us where you want to go and how you like to travel.
+            Velora Trip will take care of the planning.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-100 md:p-9">
+
+          <div className="grid gap-5 md:grid-cols-2">
+
+            {/* DESTINATION */}
             <div>
-              <div className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-                Your Journey Starts Here
-              </div>
+              <label className="mb-2 block text-sm font-semibold">
+                Destination
+              </label>
 
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Plan Your Next Adventure
-              </h2>
-
-              <p className="mt-2 text-slate-500">
-                Tell us how you want to travel and Velora Trip will build your
-                personalized itinerary.
-              </p>
+              <input
+                type="text"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                placeholder="e.g. Tokyo, Japan"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              />
             </div>
 
-            <div className="flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-              ✦ Powered by Google Gemini
-            </div>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            <FormField
-              label="Destination"
-              value={destination}
-              onChange={setDestination}
-              placeholder="e.g. Tokyo, Japan"
-              type="text"
-              icon="📍"
-            />
-
-            <FormField
-              label="Total Budget (RM)"
-              value={budget}
-              onChange={setBudget}
-              placeholder="e.g. 3000"
-              type="number"
-              icon="💳"
-            />
-
-            <FormField
-              label="Number of Days"
-              value={days}
-              onChange={setDays}
-              placeholder="e.g. 5"
-              type="number"
-              icon="📅"
-            />
-
+            {/* BUDGET */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
+              <label className="mb-2 block text-sm font-semibold">
+                Total Budget (RM)
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                placeholder="e.g. 3000"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              />
+            </div>
+
+            {/* DAYS */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold">
+                Number of Days
+              </label>
+
+              <input
+                type="number"
+                min="1"
+                max="14"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                placeholder="e.g. 5"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              />
+            </div>
+
+            {/* TRAVELLERS */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold">
                 Travellers
               </label>
 
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2">
-                  👥
-                </span>
-
-                <select
-                  value={travelers}
-                  onChange={(e) => setTravelers(e.target.value)}
-                  className="h-14 w-full appearance-none rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-slate-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                >
-                  <option value="1">1 Traveller</option>
-                  <option value="2">2 Travellers</option>
-                  <option value="3">3 Travellers</option>
-                  <option value="4">4 Travellers</option>
-                  <option value="5">5 Travellers</option>
-                  <option value="6">6 Travellers</option>
-                </select>
-              </div>
+              <select
+                value={travelers}
+                onChange={(e) => setTravelers(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              >
+                <option value="1">1 Traveller</option>
+                <option value="2">2 Travellers</option>
+                <option value="3">3 Travellers</option>
+                <option value="4">4 Travellers</option>
+                <option value="5">5 Travellers</option>
+                <option value="6">6 Travellers</option>
+              </select>
             </div>
           </div>
 
           {/* INTERESTS */}
           <div className="mt-7">
-            <label className="mb-3 block text-sm font-semibold text-slate-700">
-              What are you interested in?
+            <label className="mb-3 block text-sm font-semibold">
+              Travel Interests
             </label>
 
             <div className="flex flex-wrap gap-3">
               {interestsList.map((interest) => {
-                const active = selectedInterests.includes(interest);
+                const active =
+                  selectedInterests.includes(interest);
 
                 return (
                   <button
-                    key={interest}
                     type="button"
-                    onClick={() => toggleInterest(interest)}
+                    key={interest}
+                    onClick={() =>
+                      toggleInterest(interest)
+                    }
                     className={`rounded-full border px-5 py-2.5 text-sm font-medium ${
                       active
-                        ? "border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-200"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50"
                     }`}
                   >
-                    {getInterestIcon(interest)} {interest}
+                    {getInterestIcon(interest)}{" "}
+                    {interest}
                   </button>
                 );
               })}
@@ -359,389 +379,358 @@ export default function Home() {
           </div>
 
           {error && (
-            <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+            <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
               {error}
             </div>
           )}
 
-          <div className="mt-8">
-            <button
-              type="button"
-              onClick={generateTrip}
-              disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-blue-200 hover:-translate-y-0.5 hover:shadow-xl disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto md:min-w-64"
-            >
-              {loading ? (
-                <>
-                  <span className="animate-spin">◌</span>
-                  Creating your journey...
-                </>
-              ) : (
-                <>✦ Generate My Itinerary</>
-              )}
-            </button>
+          {/* GENERATE */}
+          <button
+            type="button"
+            onClick={generateTrip}
+            disabled={loading}
+            className="mt-8 w-full rounded-xl bg-blue-600 px-6 py-4 font-semibold text-white shadow-lg shadow-blue-100 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading
+              ? "✨ Gemini is planning your adventure..."
+              : "✨ Generate My Trip"}
+          </button>
 
-            <p className="mt-3 text-sm text-slate-400">
-              AI-powered recommendations generated around your preferences.
+          <p className="mt-3 text-center text-xs text-slate-400">
+            AI-powered trip planning with Google Gemini
+          </p>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="bg-slate-50 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+
+          <div className="mb-10 text-center">
+            <h2 className="text-3xl font-bold">
+              Smarter planning. Better journeys.
+            </h2>
+
+            <p className="mt-3 text-slate-500">
+              Everything you need to turn an idea into a
+              well-planned adventure.
             </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <FeatureCard
+              icon="✨"
+              title="AI-Powered Planning"
+              text="Personalized itineraries built around your destination, interests and travel style."
+            />
+
+            <FeatureCard
+              icon="💰"
+              title="Budget Intelligence"
+              text="See estimated spending, daily costs and how your itinerary fits your overall budget."
+            />
+
+            <FeatureCard
+              icon="📍"
+              title="Explore With Ease"
+              text="Open every recommended location directly in Google Maps while you travel."
+            />
           </div>
         </div>
       </section>
 
-      {/* BENEFITS */}
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          <FeatureCard
-            icon="✦"
-            title="AI-Powered"
-            text="Personalized travel plans created around your preferences."
-          />
-
-          <FeatureCard
-            icon="💰"
-            title="Budget Smart"
-            text="Understand estimated spending before your journey begins."
-          />
-
-          <FeatureCard
-            icon="🗺️"
-            title="Easy Navigation"
-            text="Open recommended destinations directly in Google Maps."
-          />
-
-          <FeatureCard
-            icon="♡"
-            title="Save Your Trips"
-            text="Keep your generated journeys ready for later."
-          />
-        </div>
-      </section>
-
-      {/* GENERATED TRIP */}
+      {/* GENERATED RESULT */}
       {trip && (
         <section
           id="generated-trip"
-          className="border-y border-slate-200 bg-white py-20"
+          className="mx-auto max-w-7xl px-6 py-20"
         >
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            {/* DESTINATION HEADER */}
-            <div className="relative mb-10 min-h-[390px] overflow-hidden rounded-[2rem]">
-              <Image
-                src={getDestinationImage(trip.destination)}
-                alt={trip.destination}
-                fill
-                className="object-cover"
-              />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/45 to-transparent" />
+          {/* DESTINATION HERO */}
+          <div className="relative mb-10 h-[380px] overflow-hidden rounded-3xl">
 
-              <div className="absolute inset-x-0 bottom-0 p-7 text-white md:p-10">
-                <div className="mb-3 inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-medium backdrop-blur-md">
-                  Your Velora Journey
-                </div>
+            <Image
+              src={getDestinationImage(
+                trip.destination
+              )}
+              alt={trip.destination}
+              fill
+              className="object-cover"
+            />
 
-                <h2 className="text-4xl font-bold md:text-5xl">
-                  {trip.destination}
-                </h2>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
 
-                <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                  <TripBadge text={`${trip.days} days`} />
-                  <TripBadge
-                    text={`${trip.travelers} ${
-                      Number(trip.travelers) === 1
-                        ? "traveller"
-                        : "travellers"
-                    }`}
-                  />
-                  <TripBadge
-                    text={`RM ${Number(trip.budget).toLocaleString()}`}
-                  />
+            <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
 
-                  {trip.interests.length > 0 && (
-                    <TripBadge text={trip.interests.join(" • ")} />
-                  )}
-                </div>
-              </div>
-            </div>
+              <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-blue-200">
+                Your Velora Journey
+              </p>
 
-            {/* BUDGET INTELLIGENCE */}
-            <BudgetIntelligence trip={trip} />
-
-            {/* ITINERARY TITLE */}
-            <div className="mb-8 mt-16">
-              <div className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-                Your Itinerary
-              </div>
-
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-                Day-by-day adventure
+              <h2 className="text-4xl font-bold md:text-5xl">
+                {trip.destination}
               </h2>
 
-              <p className="mt-2 text-slate-500">
-                A personalized schedule created for your trip to{" "}
-                {trip.destination}.
-              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <TripPill>
+                  📅 {trip.days} Days
+                </TripPill>
+
+                <TripPill>
+                  👥 {trip.travelers}{" "}
+                  {Number(trip.travelers) === 1
+                    ? "Traveller"
+                    : "Travellers"}
+                </TripPill>
+
+                <TripPill>
+                  💰 RM{" "}
+                  {Number(
+                    trip.budget
+                  ).toLocaleString()}
+                </TripPill>
+
+                {trip.interests.length > 0 && (
+                  <TripPill>
+                    ✨ {trip.interests.join(", ")}
+                  </TripPill>
+                )}
+              </div>
             </div>
+          </div>
 
-            {/* DAYS */}
-            <div className="space-y-8">
-              {trip.itinerary.map((day) => (
-                <div
-                  key={day.day}
-                  className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50"
-                >
-                  <div className="flex flex-col justify-between gap-4 border-b border-slate-200 bg-white px-6 py-5 md:flex-row md:items-center">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-600 font-bold text-white shadow-md shadow-blue-200">
-                        {day.day}
-                      </div>
+          {/* BUDGET */}
+          <BudgetSection trip={trip} />
 
-                      <div>
-                        <div className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                          Day {day.day}
-                        </div>
+          {/* ITINERARY HEADING */}
+          <div className="mb-8 mt-16">
 
-                        <h3 className="text-xl font-bold text-slate-900">
-                          {day.title}
-                        </h3>
-                      </div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+              Your Itinerary
+            </p>
+
+            <h2 className="mt-2 text-3xl font-bold">
+              Your journey, day by day
+            </h2>
+
+            <p className="mt-2 text-slate-500">
+              A personalized itinerary created for your
+              adventure in {trip.destination}.
+            </p>
+          </div>
+
+          {/* DAYS */}
+          <div className="space-y-8">
+            {trip.itinerary.map((day) => (
+              <div
+                key={day.day}
+                className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"
+              >
+
+                {/* DAY HEADER */}
+                <div className="flex flex-col justify-between gap-4 border-b border-slate-100 bg-slate-50 px-6 py-5 sm:flex-row sm:items-center">
+
+                  <div className="flex items-center gap-4">
+
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
+                      {day.day}
                     </div>
 
-                    <div className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
-                      Est. RM {Number(day.estimatedTotal).toLocaleString()}
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                        Day {day.day}
+                      </p>
+
+                      <h3 className="text-xl font-bold">
+                        {day.title}
+                      </h3>
                     </div>
                   </div>
 
-                  <div className="p-6 md:p-8">
-                    <div className="relative">
-                      <div className="absolute bottom-5 left-[19px] top-5 hidden w-px bg-slate-200 sm:block" />
-
-                      <div className="space-y-6">
-                        <TimelineActivity
-                          label="Morning"
-                          activity={day.morning}
-                          icon="☀️"
-                        />
-
-                        <TimelineActivity
-                          label="Lunch"
-                          activity={day.lunch}
-                          icon="🍽️"
-                        />
-
-                        <TimelineActivity
-                          label="Afternoon"
-                          activity={day.afternoon}
-                          icon="🌤️"
-                        />
-
-                        <TimelineActivity
-                          label="Dinner"
-                          activity={day.dinner}
-                          icon="🥢"
-                        />
-
-                        <TimelineActivity
-                          label="Evening"
-                          activity={day.evening}
-                          icon="🌙"
-                        />
-                      </div>
-                    </div>
+                  <div className="w-fit rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
+                    Estimated RM{" "}
+                    {Number(
+                      day.estimatedTotal
+                    ).toLocaleString()}
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* ACTIONS */}
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={saveTrip}
-                className="rounded-2xl bg-blue-600 px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-200 hover:bg-blue-700"
-              >
-                {saved ? "✓ Trip Saved" : "♡ Save This Trip"}
-              </button>
+                {/* ACTIVITIES */}
+                <div className="p-6 md:p-8">
+                  <div className="space-y-5">
 
-              <Link
-                href="/my-trips"
-                className="rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-center font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-600"
-              >
-                View My Trips
-              </Link>
+                    <TimelineActivity
+                      title="Morning"
+                      icon="☀️"
+                      activity={day.morning}
+                    />
 
-              <button
-                type="button"
-                onClick={resetPlanner}
-                className="rounded-2xl border border-slate-200 bg-white px-6 py-3.5 font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-600"
-              >
-                Plan Another Trip
-              </button>
-            </div>
+                    <TimelineActivity
+                      title="Lunch"
+                      icon="🍽️"
+                      activity={day.lunch}
+                    />
+
+                    <TimelineActivity
+                      title="Afternoon"
+                      icon="🌤️"
+                      activity={day.afternoon}
+                    />
+
+                    <TimelineActivity
+                      title="Dinner"
+                      icon="🥢"
+                      activity={day.dinner}
+                    />
+
+                    <TimelineActivity
+                      title="Evening"
+                      icon="🌙"
+                      activity={day.evening}
+                    />
+
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* BUTTONS */}
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+
+            <button
+              onClick={saveTrip}
+              className="rounded-xl bg-blue-600 px-6 py-3.5 font-semibold text-white hover:bg-blue-700"
+            >
+              {saved
+                ? "✓ Trip Saved"
+                : "♡ Save Trip"}
+            </button>
+
+            <Link
+              href="/my-trips"
+              className="rounded-xl border border-slate-200 px-6 py-3.5 text-center font-semibold hover:border-blue-300 hover:text-blue-600"
+            >
+              My Trips
+            </Link>
+
+            <button
+              onClick={resetPlanner}
+              className="rounded-xl border border-slate-200 px-6 py-3.5 font-semibold hover:border-blue-300 hover:text-blue-600"
+            >
+              Plan Another Trip
+            </button>
           </div>
         </section>
       )}
 
       {/* DESTINATIONS */}
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
-        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <div className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-              Get Inspired
-            </div>
+      <section className="bg-slate-50 py-20">
+        <div className="mx-auto max-w-7xl px-6">
 
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
-              Where will you go next?
+          <div className="mb-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+              Inspiration
+            </p>
+
+            <h2 className="mt-2 text-3xl font-bold">
+              Discover your next destination
             </h2>
 
             <p className="mt-2 text-slate-500">
-              A little inspiration for your next Velora journey.
+              Not sure where to go? Start with one of these
+              unforgettable destinations.
             </p>
           </div>
-        </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <DestinationCard
-            image="/images/tokyo.jpg"
-            destination="Tokyo"
-            country="Japan"
-            onSelect={() => {
-              setDestination("Tokyo, Japan");
-              document
-                .getElementById("planner")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          />
+          <div className="grid gap-6 md:grid-cols-3">
 
-          <DestinationCard
-            image="/images/santorini.jpg"
-            destination="Santorini"
-            country="Greece"
-            onSelect={() => {
-              setDestination("Santorini, Greece");
-              document
-                .getElementById("planner")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          />
+            <DestinationCard
+              image="/images/tokyo.jpg"
+              name="Tokyo"
+              country="Japan"
+              onClick={() =>
+                chooseDestination(
+                  "Tokyo, Japan",
+                  setDestination
+                )
+              }
+            />
 
-          <DestinationCard
-            image="/images/bali.jpg"
-            destination="Bali"
-            country="Indonesia"
-            onSelect={() => {
-              setDestination("Bali, Indonesia");
-              document
-                .getElementById("planner")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-          />
-        </div>
-      </section>
+            <DestinationCard
+              image="/images/santorini.jpg"
+              name="Santorini"
+              country="Greece"
+              onClick={() =>
+                chooseDestination(
+                  "Santorini, Greece",
+                  setDestination
+                )
+              }
+            />
 
-      {/* FINAL CTA */}
-      <section className="mx-auto max-w-7xl px-6 pb-20 lg:px-8">
-        <div className="overflow-hidden rounded-[2rem] bg-slate-950 px-7 py-12 text-center text-white md:px-12 md:py-16">
-          <div className="mx-auto max-w-2xl">
-            <div className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
-              Velora Trip
-            </div>
+            <DestinationCard
+              image="/images/bali.jpg"
+              name="Bali"
+              country="Indonesia"
+              onClick={() =>
+                chooseDestination(
+                  "Bali, Indonesia",
+                  setDestination
+                )
+              }
+            />
 
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Your next journey starts with an idea.
-            </h2>
-
-            <p className="mx-auto mt-4 max-w-xl text-slate-300">
-              Choose your destination, set your budget and let AI turn your
-              travel ideas into a personalized itinerary.
-            </p>
-
-            <a
-              href="#planner"
-              className="mt-7 inline-flex rounded-2xl bg-white px-6 py-3 font-semibold text-slate-900 hover:bg-blue-50"
-            >
-              Create My Trip
-            </a>
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-6 px-6 py-10 sm:flex-row sm:items-center">
+
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-400 text-white">
+
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
               ✈
             </div>
 
             <div>
-              <div className="font-bold text-slate-900">
-                Velora <span className="text-blue-600">Trip</span>
-              </div>
+              <p className="font-bold">
+                Velora{" "}
+                <span className="text-blue-600">
+                  Trip
+                </span>
+              </p>
 
-              <div className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Plan Smarter. Travel Further.
-              </div>
+              </p>
             </div>
           </div>
 
-          <div className="text-sm text-slate-400">
-            © 2026 Velora Trip. AI-powered travel planning.
-          </div>
+          <p className="text-sm text-slate-400">
+            © 2026 Velora Trip · Powered by Google
+            Gemini AI
+          </p>
         </div>
       </footer>
     </main>
   );
 }
 
-/* =========================================================
+/* ======================================================
    COMPONENTS
-========================================================= */
+====================================================== */
 
-function FormField({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type,
-  icon,
+function HeroPill({
+  text,
 }: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-  type: string;
-  icon: string;
+  text: string;
 }) {
   return (
-    <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-700">
-        {label}
-      </label>
-
-      <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2">
-          {icon}
-        </span>
-
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          min={type === "number" ? 1 : undefined}
-          className="h-14 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-        />
-      </div>
-    </div>
-  );
-}
-
-function HeroBadge({ text }: { text: string }) {
-  return (
-    <div className="rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
+    <span className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur">
       ✓ {text}
-    </div>
+    </span>
   );
 }
 
@@ -755,12 +744,14 @@ function FeatureCard({
   text: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-lg">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-xl text-blue-600">
+    <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl">
         {icon}
       </div>
 
-      <h3 className="font-bold text-slate-900">{title}</h3>
+      <h3 className="text-lg font-bold">
+        {title}
+      </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-500">
         {text}
@@ -769,104 +760,136 @@ function FeatureCard({
   );
 }
 
-function TripBadge({ text }: { text: string }) {
+function TripPill({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <span className="rounded-full border border-white/20 bg-white/15 px-4 py-2 backdrop-blur-md">
-      {text}
+    <span className="rounded-full bg-white/15 px-4 py-2 text-sm backdrop-blur">
+      {children}
     </span>
   );
 }
 
-function BudgetIntelligence({ trip }: { trip: Trip }) {
-  const estimatedCost = getEstimatedTripCost(trip);
-  const remaining = trip.budget - estimatedCost;
+function BudgetSection({
+  trip,
+}: {
+  trip: Trip;
+}) {
+  const estimated =
+    getEstimatedTripCost(trip);
 
-  const percentage =
-    trip.budget > 0
-      ? Math.min((estimatedCost / trip.budget) * 100, 100)
+  const remaining =
+    trip.budget - estimated;
+
+  const average =
+    trip.days > 0
+      ? estimated / trip.days
       : 0;
 
-  const averagePerDay =
-    trip.days > 0 ? estimatedCost / trip.days : 0;
+  const actualPercentage =
+    trip.budget > 0
+      ? (estimated / trip.budget) * 100
+      : 0;
 
-  const overBudget = remaining < 0;
+  const progressPercentage =
+    Math.min(actualPercentage, 100);
+
+  const overBudget =
+    remaining < 0;
 
   return (
     <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
-      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-        <div>
-          <div className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
-            Budget Intelligence
-          </div>
 
-          <h3 className="mt-2 text-2xl font-bold text-slate-900">
-            Know your spending before you go
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
+            Budget Intelligence
+          </p>
+
+          <h3 className="mt-2 text-2xl font-bold">
+            Your trip at a glance
           </h3>
         </div>
 
-        <div
+        <span
           className={`w-fit rounded-full px-4 py-2 text-sm font-semibold ${
             overBudget
               ? "bg-red-100 text-red-700"
               : "bg-emerald-100 text-emerald-700"
           }`}
         >
-          {overBudget ? "Over Budget" : "Within Budget"}
-        </div>
+          {overBudget
+            ? "Over Budget"
+            : "Within Budget"}
+        </span>
       </div>
 
       <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
         <BudgetCard
-          label="Total Budget"
-          value={`RM ${Number(trip.budget).toLocaleString()}`}
+          title="Total Budget"
+          value={`RM ${Number(
+            trip.budget
+          ).toLocaleString()}`}
         />
 
         <BudgetCard
-          label="Estimated Spending"
-          value={`RM ${Math.round(estimatedCost).toLocaleString()}`}
+          title="Estimated Spending"
+          value={`RM ${Math.round(
+            estimated
+          ).toLocaleString()}`}
         />
 
         <BudgetCard
-          label={overBudget ? "Over Budget By" : "Budget Remaining"}
-          value={`RM ${Math.abs(Math.round(remaining)).toLocaleString()}`}
+          title={
+            overBudget
+              ? "Over Budget By"
+              : "Budget Remaining"
+          }
+          value={`RM ${Math.abs(
+            Math.round(remaining)
+          ).toLocaleString()}`}
         />
 
         <BudgetCard
-          label="Average Per Day"
-          value={`RM ${Math.round(averagePerDay).toLocaleString()}`}
+          title="Average Per Day"
+          value={`RM ${Math.round(
+            average
+          ).toLocaleString()}`}
         />
       </div>
 
       <div className="mt-7">
+
         <div className="mb-2 flex justify-between text-sm">
-          <span className="font-medium text-slate-600">
+          <span className="text-slate-500">
             Estimated budget usage
           </span>
 
-          <span className="font-semibold text-slate-900">
-            {Math.round(
-              trip.budget > 0
-                ? (estimatedCost / trip.budget) * 100
-                : 0
-            )}
-            %
+          <span className="font-semibold">
+            {Math.round(actualPercentage)}%
           </span>
         </div>
 
         <div className="h-3 overflow-hidden rounded-full bg-slate-200">
           <div
             className={`h-full rounded-full ${
-              overBudget ? "bg-red-500" : "bg-blue-600"
+              overBudget
+                ? "bg-red-500"
+                : "bg-blue-600"
             }`}
             style={{
-              width: `${percentage}%`,
+              width: `${progressPercentage}%`,
             }}
           />
         </div>
 
-        <p className="mt-3 text-xs leading-5 text-slate-400">
-          Estimates are intended as planning guidance. Actual travel prices
-          may vary.
+        <p className="mt-3 text-xs text-slate-400">
+          Costs are AI-generated estimates and may
+          differ from actual travel prices.
         </p>
       </div>
     </div>
@@ -874,84 +897,96 @@ function BudgetIntelligence({ trip }: { trip: Trip }) {
 }
 
 function BudgetCard({
-  label,
+  title,
   value,
 }: {
-  label: string;
+  title: string;
   value: string;
 }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <p className="text-sm text-slate-500">{label}</p>
 
-      <p className="mt-2 text-2xl font-bold text-slate-900">
+      <p className="text-sm text-slate-500">
+        {title}
+      </p>
+
+      <p className="mt-2 text-2xl font-bold">
         {value}
       </p>
+
     </div>
   );
 }
 
 function TimelineActivity({
-  label,
-  activity,
+  title,
   icon,
+  activity,
 }: {
-  label: string;
-  activity: Activity;
+  title: string;
   icon: string;
+  activity: Activity;
 }) {
   if (!activity) return null;
 
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    activity.place
-  )}`;
+  const mapsUrl =
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      activity.place
+    )}`;
 
   return (
-    <div className="relative flex gap-4">
-      <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm">
+    <div className="flex gap-4">
+
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50">
         {icon}
       </div>
 
-      <div className="flex-1 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+      <div className="flex-1 rounded-2xl border border-slate-100 bg-slate-50 p-5">
+
+        <div className="flex flex-col justify-between gap-3 sm:flex-row">
+
           <div>
-            <div className="flex flex-wrap items-center gap-2">
+
+            <div className="flex items-center gap-2">
+
               <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                {label}
+                {title}
               </span>
 
-              <span className="text-xs text-slate-400">
-                •
-              </span>
-
-              <span className="text-sm font-medium text-slate-500">
+              <span className="text-sm text-slate-400">
                 {activity.time}
               </span>
+
             </div>
 
-            <h4 className="mt-2 text-lg font-bold text-slate-900">
+            <h4 className="mt-2 text-lg font-bold">
               {activity.place}
             </h4>
 
             <p className="mt-2 leading-6 text-slate-600">
               {activity.activity}
             </p>
+
           </div>
 
-          <div className="shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700">
-            RM {Number(activity.cost).toLocaleString()}
-          </div>
+          <span className="h-fit rounded-full bg-white px-3 py-1.5 text-sm font-semibold shadow-sm">
+            RM{" "}
+            {Number(
+              activity.cost
+            ).toLocaleString()}
+          </span>
+
         </div>
 
         <a
           href={mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+          className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:text-blue-700"
         >
-          View on Google Maps
-          <span>↗</span>
+          📍 View on Google Maps ↗
         </a>
+
       </div>
     </div>
   );
@@ -959,69 +994,87 @@ function TimelineActivity({
 
 function DestinationCard({
   image,
-  destination,
+  name,
   country,
-  onSelect,
+  onClick,
 }: {
   image: string;
-  destination: string;
+  name: string;
   country: string;
-  onSelect: () => void;
+  onClick: () => void;
 }) {
   return (
     <button
       type="button"
-      onClick={onSelect}
+      onClick={onClick}
       className="group relative h-80 overflow-hidden rounded-3xl text-left shadow-lg"
     >
+
       <Image
         src={image}
-        alt={`${destination}, ${country}`}
+        alt={`${name}, ${country}`}
         fill
         className="object-cover transition duration-500 group-hover:scale-105"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
 
-      <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-        <div className="text-2xl font-bold">
-          {destination}
-        </div>
+      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+
+        <h3 className="text-2xl font-bold">
+          {name}
+        </h3>
 
         <div className="mt-1 flex items-center justify-between">
-          <span className="text-sm text-white/80">
-            📍 {country}
-          </span>
 
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition group-hover:bg-white group-hover:text-slate-900">
+          <p className="text-sm text-white/80">
+            📍 {country}
+          </p>
+
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur">
             →
           </span>
+
         </div>
       </div>
     </button>
   );
 }
 
-/* =========================================================
+/* ======================================================
    HELPERS
-========================================================= */
+====================================================== */
 
-function getEstimatedTripCost(trip: Trip) {
+function getEstimatedTripCost(
+  trip: Trip
+) {
   return trip.itinerary.reduce(
     (total, day) =>
-      total + Number(day.estimatedTotal || 0),
+      total +
+      Number(
+        day.estimatedTotal || 0
+      ),
     0
   );
 }
 
-function getDestinationImage(destination: string) {
-  const name = destination.toLowerCase();
+function getDestinationImage(
+  destination: string
+) {
+  const name =
+    destination.toLowerCase();
 
-  if (name.includes("tokyo") || name.includes("japan")) {
+  if (
+    name.includes("tokyo") ||
+    name.includes("japan")
+  ) {
     return "/images/tokyo.jpg";
   }
 
-  if (name.includes("bali") || name.includes("indonesia")) {
+  if (
+    name.includes("bali") ||
+    name.includes("indonesia")
+  ) {
     return "/images/bali.jpg";
   }
 
@@ -1035,7 +1088,9 @@ function getDestinationImage(destination: string) {
   return "/images/hero-travel.jpg";
 }
 
-function getInterestIcon(interest: string) {
+function getInterestIcon(
+  interest: string
+) {
   switch (interest) {
     case "Food":
       return "🍜";
@@ -1056,6 +1111,21 @@ function getInterestIcon(interest: string) {
       return "🌙";
 
     default:
-      return "✦";
+      return "✨";
   }
+}
+
+function chooseDestination(
+  destination: string,
+  setDestination: (
+    value: string
+  ) => void
+) {
+  setDestination(destination);
+
+  document
+    .getElementById("planner")
+    ?.scrollIntoView({
+      behavior: "smooth",
+    });
 }

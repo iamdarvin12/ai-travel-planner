@@ -2,31 +2,22 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: {
-    default: "Velora Trip | AI Travel Planner",
-    template: "%s | Velora Trip",
-  },
-
+  title: "Velora Trip | AI Travel Planner",
   description:
-    "Plan personalized trips with Velora Trip. Generate AI-powered itineraries based on your destination, budget, interests, and travel style.",
-
+    "Plan smarter and travel further with Velora Trip. Create personalized AI-powered itineraries based on your destination, budget, interests, and travel style.",
+  applicationName: "Velora Trip",
   keywords: [
     "Velora Trip",
     "AI travel planner",
+    "travel itinerary",
     "trip planner",
     "AI itinerary generator",
-    "travel itinerary",
-    "vacation planner",
   ],
-
   authors: [{ name: "Velora Trip" }],
-
-  applicationName: "Velora Trip",
-
   openGraph: {
     title: "Velora Trip | AI Travel Planner",
     description:
-      "Turn your travel ideas into personalized AI-powered itineraries.",
+      "Create personalized AI-powered travel itineraries in seconds.",
     type: "website",
   },
 };
